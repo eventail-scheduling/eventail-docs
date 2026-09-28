@@ -1,0 +1,36 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    # The root alone covers only .github/workflows, not the local actions.
+    directories:
+      - /
+      - /.github/actions/*
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      # vue-tsc needs the compiler API that TypeScript 7.0 dropped; revisit once
+      # vue-tsc runs on TypeScript 7.
+      - dependency-name: typescript
+        versions: [">=7"]
+    commit-message:
+      prefix: chore
+      include: scope
+    cooldown:
+      default-days: 1
+    groups:
+      npm:
+        patterns:
+          - "*"

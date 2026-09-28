@@ -1,0 +1,4 @@
+sideEffectsCache: false
+allowBuilds:
+  esbuild: true
+  lefthook: true
