@@ -3,8 +3,8 @@
 ## Setup
 
 `pnpm install` installs the Git hooks. Before each commit, Biome checks and formats the staged
-scripts and JSON files; each commit message is checked against the conventions below. Pull
-requests get the same check on their title and every commit.
+scripts and JSON files, and a hook checks the commit message against the conventions below. Pull
+requests get the message check too, on their title and on every commit.
 
 ## Commit messages
 
@@ -20,10 +20,10 @@ Commit messages follow [Conventional Commits](https://www.conventionalcommits.or
 
 ## Pull requests
 
-Checks run Biome and actionlint, type-check the site config and theme, and build the site.
-Every merge to `main` publishes it.
+CI runs Biome and actionlint, type-checks the site config, theme and data loaders, and builds
+the site. Every merge to `main` publishes it.
 
 ## License
 
-Contributions are licensed under the [Apache License 2.0](LICENSE), the same as the project, as
-its section 5 sets out.
+Contributions are licensed under the [Apache License 2.0](LICENSE), like the rest of the project
+(see section 5 of the license).

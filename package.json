@@ -5,7 +5,7 @@
     "license": "Apache-2.0",
     "type": "module",
     "scripts": {
-        "dev": "vitepress dev docs",
+        "start": "vitepress dev docs",
         "build": "vitepress build docs",
         "preview": "vitepress preview docs",
         "typecheck": "vue-tsc",
@@ -24,6 +24,7 @@
         "lefthook": "^2.1.14",
         "typescript": "^6.0.3",
         "vitepress": "^1.6.4",
+        "vitepress-openapi": "^0.2.5",
         "vue": "^3.5.43",
         "vue-tsc": "^3.3.11"
     }

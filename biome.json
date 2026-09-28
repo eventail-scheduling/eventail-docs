@@ -14,7 +14,8 @@
             "package.json",
             "tsconfig.json",
             "docs/.vitepress/**/*.ts",
-            "docs/.vitepress/**/*.vue"
+            "docs/.vitepress/**/*.vue",
+            "docs/reference/**/*.ts"
         ]
     },
     "linter": {

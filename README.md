@@ -1,7 +1,7 @@
-# Eventail Docs
+# Eventail docs
 
-The documentation site for Eventail, a call for papers and scheduling system for conferences,
-published at https://eventail-scheduling.github.io/eventail-docs/. It covers running the
+The documentation site for Eventail, a call for papers and scheduling system for conferences. It
+is published at https://eventail-scheduling.github.io/eventail-docs/ and covers running the
 [Eventail API](https://github.com/eventail-scheduling/eventail-api) and the
 [Eventail Web](https://github.com/eventail-scheduling/eventail-web) client, and building
 integrations against them.
@@ -10,15 +10,18 @@ integrations against them.
 
 Requires Node.js 26 and pnpm.
 
-- `pnpm install`
-- `pnpm dev`
+```sh
+pnpm install
+pnpm start
+```
 
 The site runs on http://localhost:5173/eventail-docs/ and reloads as pages change.
 
 ## Checks
 
-`pnpm typecheck` checks the site config and theme. `pnpm build` builds the site as it
-is published, and fails on a link to a page that does not exist.
+`pnpm typecheck` checks the site config, theme and data loaders. `pnpm check` formats and lints
+them with Biome. `pnpm build` builds the site as it is published, and fails on a link to a page
+that does not exist.
 
 ## Contributing
 

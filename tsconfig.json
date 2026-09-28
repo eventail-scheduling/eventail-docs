@@ -1,6 +1,7 @@
 {
     "extends": "@tsconfig/node26/tsconfig.json",
     "compilerOptions": {
+        "target": "es2022",
         "noEmit": true,
         "lib": ["es2025", "DOM", "DOM.Iterable"],
         "module": "preserve",
@@ -9,5 +10,5 @@
         "verbatimModuleSyntax": true,
         "types": ["node"]
     },
-    "include": ["docs/.vitepress/**/*.ts", "docs/.vitepress/**/*.vue"]
+    "include": ["docs/.vitepress/**/*.ts", "docs/.vitepress/**/*.vue", "docs/reference/**/*.ts"]
 }
