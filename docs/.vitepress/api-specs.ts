@@ -14,6 +14,9 @@ const specsDirectory = new URL("../public/specs/", import.meta.url);
 /**
  * Reads every `public/specs/vX.Y.json`, newest first.
  *
+ * The API's publish-docs workflow writes one per minor version on each release, replacing it with
+ * the newest patch's, so a hand edit lasts only until that minor's next release.
+ *
  * Throws when there is none, since the reference's pages and sidebar need at least one version.
  */
 export const readApiSpecs = (): ApiSpec[] => {

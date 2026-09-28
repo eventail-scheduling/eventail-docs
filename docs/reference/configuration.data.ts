@@ -26,7 +26,12 @@ export type ConfigVersion = {
 
 export declare const data: ConfigVersion[];
 
-/** Reads every `public/config/vX.Y.json`, newest first. */
+/**
+ * Reads every `public/config/vX.Y.json`, newest first.
+ *
+ * The API's publish-docs workflow writes one per minor version on each release, replacing it with
+ * the newest patch's, so a hand edit lasts only until that minor's next release.
+ */
 export default defineLoader({
     watch: ["../public/config/v*.json"],
     load: (files: string[]): ConfigVersion[] =>
