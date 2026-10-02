@@ -42,6 +42,7 @@ export default defineConfig({
             { text: "Introduction", link: "/guide/introduction" },
             { text: "Self-hosting", link: "/self-hosting/docker-compose" },
             { text: "Integration", link: "/integration/schedule" },
+            { text: "Adapter", link: "/furry-schedule-adapter/" },
             {
                 text: "Reference",
                 items: [
@@ -76,6 +77,10 @@ export default defineConfig({
                 {
                     text: "Integration",
                     items: [{ text: "Showing the schedule", link: "/integration/schedule" }],
+                },
+                {
+                    text: "Furry schedule adapter",
+                    items: [{ text: "Running it", link: "/furry-schedule-adapter/" }],
                 },
                 {
                     text: "Reference",

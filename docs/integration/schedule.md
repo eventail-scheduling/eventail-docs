@@ -8,6 +8,11 @@ An integration mostly needs 1 endpoint: it fetches the current schedule, then po
 changes. Eventail sends no notifications, and each response is a complete snapshot of what is
 published.
 
+If the consumer you have in mind reads the
+[Furry Schedule Schema](https://github.com/Alofoxx/furry-schedule-schema) format, the
+[furry schedule adapter](/furry-schedule-adapter/) already does all of this and serves that
+document, so you do not have to write any of what follows.
+
 Paths below are relative to the API's URL: `/editions/{editionId}/schedules/current` means
 `https://api.eventail.example.com/editions/{editionId}/schedules/current`.
 

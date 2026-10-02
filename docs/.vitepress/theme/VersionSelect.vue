@@ -5,14 +5,22 @@ type Props = {
     label: string;
     versions: string[];
     current: string;
-    hrefFor: (version: string) => string;
+    /** Left out by a reference that keeps every version on one page. */
+    hrefFor?: (version: string) => string;
 };
 
 const props = defineProps<Props>();
+const emit = defineEmits<{ select: [version: string] }>();
 const router = useRouter();
 
 const switchTo = (event: Event): void => {
     const version = (event.target as HTMLSelectElement).value;
+
+    if (props.hrefFor === undefined) {
+        emit("select", version);
+        return;
+    }
+
     void router.go(withBase(props.hrefFor(version)));
 };
 </script>

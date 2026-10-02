@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { type ConfigVersion, data, type SchemaNode } from "../../reference/configuration.data.ts";
+import { computed, ref } from "vue";
+import {
+    type ConfigProduct,
+    type ConfigVersion,
+    data,
+    type SchemaNode,
+} from "../../reference/configuration.data.ts";
 import VersionSelect from "./VersionSelect.vue";
 
 type Props = {
     version?: string;
+    product?: ConfigProduct;
+    /** Heading level of a top-level section, for a page that nests the reference under one. */
+    depth?: number;
 };
 
 type Setting = {
@@ -22,9 +30,30 @@ type Section = {
 
 const props = defineProps<Props>();
 
-const selected = computed((): ConfigVersion | undefined =>
-    props.version === undefined ? data[0] : data.find((entry) => entry.version === props.version),
-);
+const product = computed((): ConfigProduct => props.product ?? "eventail");
+const versions = computed((): ConfigVersion[] => data[product.value]);
+
+// Only the API publishes a page per version, so only it navigates between
+// them. The adapter keeps its whole reference on one page and swaps in place.
+const versionLabels: Record<ConfigProduct, string> = {
+    eventail: "API version",
+    "furry-schedule-adapter": "Adapter version",
+};
+
+const versionPages: Record<ConfigProduct, boolean> = {
+    eventail: true,
+    "furry-schedule-adapter": false,
+};
+
+const chosen = ref<string>();
+
+const selected = computed((): ConfigVersion | undefined => {
+    const wanted = props.version ?? chosen.value;
+
+    return wanted === undefined
+        ? versions.value[0]
+        : versions.value.find((entry) => entry.version === wanted);
+});
 
 const collectSections = (
     node: SchemaNode,
@@ -62,7 +91,7 @@ const sections = computed((): Section[] => {
     const collected: Section[] = [];
 
     if (selected.value !== undefined) {
-        collectSections(selected.value.schema, [], 2, collected);
+        collectSections(selected.value.schema, [], props.depth ?? 2, collected);
     }
 
     return collected;
@@ -134,7 +163,7 @@ const formatValue = (value: unknown): string =>
 const anchor = (path: string): string => path.replaceAll(".", "-");
 
 const hrefFor = (version: string): string =>
-    version === data[0].version
+    version === data.eventail[0].version
         ? "/reference/configuration/"
         : `/reference/configuration/${version}`;
 </script>
@@ -145,10 +174,11 @@ const hrefFor = (version: string): string =>
     </p>
     <template v-else>
         <VersionSelect
-            label="API version"
-            :versions="data.map((entry) => entry.version)"
+            :label="versionLabels[product]"
+            :versions="versions.map((entry) => entry.version)"
             :current="selected.version"
-            :href-for="hrefFor"
+            :href-for="versionPages[product] ? hrefFor : undefined"
+            @select="chosen = $event"
         />
         <template v-for="section in sections" :key="section.path">
             <component :is="`h${section.depth}`" :id="anchor(section.path)" tabindex="-1">
