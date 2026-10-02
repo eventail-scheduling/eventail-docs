@@ -1,10 +1,8 @@
 # Eventail docs
 
 The documentation site for Eventail, a call for papers and scheduling system for conferences. It
-is published at https://eventail-scheduling.github.io/eventail-docs/ and covers running the
-[Eventail API](https://github.com/eventail-scheduling/eventail-api) and the
-[Eventail Web](https://github.com/eventail-scheduling/eventail-web) client, and building
-integrations against them.
+is published at https://eventail-scheduling.github.io/eventail-docs/ and covers running
+[Eventail](https://github.com/eventail-scheduling/eventail) and building integrations against it.
 
 ## Development
 

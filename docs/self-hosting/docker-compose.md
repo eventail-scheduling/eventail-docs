@@ -29,7 +29,7 @@ cp api.env.example api.env
 cp web.env.example web.env
 ```
 
-`compose.yml` pins the API and web images to a release; see [Upgrade](#upgrade).
+`compose.yml` pins the API and web images to the same Eventail release; see [Upgrade](#upgrade).
 
 ## Configure
 
@@ -113,10 +113,9 @@ admin, you create the first team and the first edition. If signing in fails,
 
 ## Upgrade
 
-Read the release notes of
-[eventail-deploy](https://github.com/eventail-scheduling/eventail-deploy/releases) and the
-[API](https://github.com/eventail-scheduling/eventail-api/releases) before upgrading: a release
-that adds a required setting says so, and the API refuses to start until it is set.
+Read [Eventail's release notes](https://github.com/eventail-scheduling/eventail/releases) before
+upgrading: a release that adds a required setting says so, and the API refuses to start until it
+is set. The Compose files are not released on their own; you always fetch the current ones.
 
 Fetching `compose.yml` again replaces it, so keep your own additions in a `compose.override.yml`
 next to it, which Compose merges automatically. A

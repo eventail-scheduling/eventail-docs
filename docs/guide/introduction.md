@@ -41,7 +41,9 @@ The Docker Compose setup runs PostgreSQL for you. You provide the object store, 
 and the sign-in provider. With the Helm chart you provide all 4.
 
 The images are published as `ghcr.io/eventail-scheduling/eventail-api` and
-`ghcr.io/eventail-scheduling/eventail-web`.
+`ghcr.io/eventail-scheduling/eventail-web`. Both are built from
+[eventail](https://github.com/eventail-scheduling/eventail) and released together, so run them
+at the same tag.
 
 ## Next steps
 

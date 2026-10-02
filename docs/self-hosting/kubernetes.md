@@ -179,7 +179,7 @@ explains the trade-offs and the settings.
 ## Set resources
 
 The chart sets no resource requests or limits. `api.resources`, `worker.resources` and
-`web.resources` each take a Kubernetes `resources` block. Measured with the 0.1.1 images and
+`web.resources` each take a Kubernetes `resources` block. Measured with the 0.1.0 images and
 the default standalone worker:
 
 | Pod    | Idle (MiB) | Peak (MiB) | Load                                                                 |
@@ -215,9 +215,10 @@ of its own, about 1Gi in total.
 
 ## Upgrade
 
-Each chart release pins the API and web versions it was tested with. Read the
-[chart's release notes](https://github.com/eventail-scheduling/eventail-deploy/releases) and
-the [API's](https://github.com/eventail-scheduling/eventail-api/releases) before upgrading: a
+Each chart release pins the Eventail version it was tested with. The
+[eventail-deploy releases](https://github.com/eventail-scheduling/eventail-deploy/releases) page
+carries both charts, and this one's are tagged `eventail-v*`. Read those and
+[Eventail's](https://github.com/eventail-scheduling/eventail/releases) before upgrading: a
 release that adds a required setting says so. Then run:
 
 ```sh
