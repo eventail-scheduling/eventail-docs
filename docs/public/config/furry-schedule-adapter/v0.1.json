@@ -1,0 +1,229 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "port": {
+            "default": 3000,
+            "description": "The port the document is served on.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535,
+            "x-env": "PORT"
+        },
+        "log": {
+            "description": "Logging to standard output: JSON lines when NODE_ENV is production, readable text otherwise.",
+            "default": {},
+            "type": "object",
+            "properties": {
+                "level": {
+                    "default": "info",
+                    "type": "string",
+                    "enum": [
+                        "trace",
+                        "debug",
+                        "info",
+                        "warn",
+                        "error",
+                        "fatal"
+                    ],
+                    "x-env": "LOG_LEVEL"
+                }
+            }
+        },
+        "eventail": {
+            "type": "object",
+            "properties": {
+                "baseUrl": {
+                    "description": "The root of the eventail API. A trailing slash is ignored. The access token is sent here, so reach the API over https or over a network you trust. Plaintext is not refused, because an in-cluster address is the normal case and no rule separates one from a public host.",
+                    "type": "string",
+                    "format": "uri",
+                    "x-env": "EVENTAIL_BASE_URL"
+                },
+                "auth": {
+                    "type": "object",
+                    "properties": {
+                        "issuer": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "The OpenID Connect issuer to mint access tokens from. Its discovery document is fetched at startup, so the adapter does not start while the issuer is unreachable, and the document must name this same issuer back.",
+                            "x-env": "EVENTAIL_AUTH_ISSUER"
+                        },
+                        "clientId": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The client credentials client the adapter authenticates as.",
+                            "x-env": "EVENTAIL_AUTH_CLIENT_ID"
+                        },
+                        "clientSecret": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "Supply this through the environment rather than a config file: EVENTAIL_AUTH_CLIENT_SECRET. Anyone holding it can mint tokens with the adapter's access.",
+                            "x-env": "EVENTAIL_AUTH_CLIENT_SECRET"
+                        },
+                        "scope": {
+                            "description": "Sent with the client credentials request when a provider needs one to issue a token carrying the right claims.",
+                            "type": "string",
+                            "minLength": 1,
+                            "x-env": "EVENTAIL_AUTH_SCOPE"
+                        },
+                        "audience": {
+                            "description": "Sent with the client credentials request. Auth0 needs it to issue a token for the API; a provider that maps the audience on the client instead, as Keycloak does, needs it left out. Either way it has to end up matching the API's jwt.audience.",
+                            "type": "string",
+                            "minLength": 1,
+                            "x-env": "EVENTAIL_AUTH_AUDIENCE"
+                        },
+                        "allowInsecureIssuer": {
+                            "default": false,
+                            "description": "Accept a plaintext issuer that is not on loopback. Needed only for a provider reached inside a cluster or a compose network, where there is no TLS to terminate. It also tells openid-client to drop its HTTPS rule for every request to that provider, including the one carrying the client secret.",
+                            "type": "boolean",
+                            "x-env": "EVENTAIL_AUTH_ALLOW_INSECURE_ISSUER"
+                        },
+                        "tokenCachePath": {
+                            "description": "A file to hold the access token between restarts, created 0600. Left out, the token lives only in memory and every start mints a new one, which some providers meter. The entry is keyed by the credentials, so editing other settings reuses it. The adapter refuses to start if it cannot write here.",
+                            "examples": [
+                                "/var/cache/adapter/token.json"
+                            ],
+                            "type": "string",
+                            "minLength": 1,
+                            "x-env": "EVENTAIL_AUTH_TOKEN_CACHE_PATH"
+                        }
+                    },
+                    "required": [
+                        "issuer",
+                        "clientId",
+                        "clientSecret"
+                    ],
+                    "description": "The client credentials the adapter authenticates with. The API must accept the resulting token as an integration; any other kind of caller reads more, not less, and would publish unconfirmed sessions."
+                },
+                "editionId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "description": "The edition whose schedule is published.",
+                    "x-env": "EVENTAIL_EDITION_ID"
+                },
+                "pollInterval": {
+                    "description": "How often the published schedule is checked for a new revision outside the convention itself. An ISO 8601 duration in time units only.",
+                    "type": "string",
+                    "format": "duration",
+                    "examples": [
+                        "PT5M",
+                        "PT1H"
+                    ],
+                    "x-env": "EVENTAIL_POLL_INTERVAL"
+                },
+                "livePollInterval": {
+                    "description": "How often it is checked from the day before the convention opens until it closes, when a schedule moves far more than it does the rest of the year. An ISO 8601 duration in time units only.",
+                    "type": "string",
+                    "format": "duration",
+                    "examples": [
+                        "PT30S"
+                    ],
+                    "x-env": "EVENTAIL_LIVE_POLL_INTERVAL"
+                },
+                "requestTimeout": {
+                    "description": "How long a single request may take, to the eventail API and to the identity provider alike. An ISO 8601 duration in time units only.",
+                    "type": "string",
+                    "format": "duration",
+                    "examples": [
+                        "PT10S"
+                    ],
+                    "x-env": "EVENTAIL_REQUEST_TIMEOUT"
+                }
+            },
+            "required": [
+                "baseUrl",
+                "auth",
+                "editionId"
+            ],
+            "description": "Where the schedule is read from."
+        },
+        "document": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "description": "The language tag every localized string is keyed by. eventail stores one language per edition without naming it, so the tag is stated here. Case is normalized. A tag beyond a language and a region is accepted but warned about, since a consumer matching the pattern the schema names would not find the text.",
+                    "type": "string",
+                    "examples": [
+                        "en",
+                        "de",
+                        "en-GB"
+                    ],
+                    "x-env": "DOCUMENT_LANGUAGE"
+                },
+                "descriptionSource": {
+                    "default": "abstract",
+                    "description": "Which session field becomes the event description. Both are optional per edition, so an edition that collects only one has to name it.",
+                    "type": "string",
+                    "enum": [
+                        "abstract",
+                        "description"
+                    ],
+                    "x-env": "DOCUMENT_DESCRIPTION_SOURCE"
+                },
+                "maxStaleness": {
+                    "description": "How long the last document keeps being served once refreshing it stops working, measured from the last refresh that succeeded rather than the last attempted. Past it the document is refused rather than served stale, which is the only signal a consumer gets. An ISO 8601 duration in time units only.",
+                    "type": "string",
+                    "format": "duration",
+                    "examples": [
+                        "PT6H",
+                        "PT24H"
+                    ],
+                    "x-env": "DOCUMENT_MAX_STALENESS"
+                }
+            },
+            "required": [
+                "language"
+            ],
+            "description": "What the emitted document says."
+        },
+        "venue": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-env": "VENUE_ID"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-env": "VENUE_NAME"
+                },
+                "address": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-env": "VENUE_ADDRESS"
+                }
+            },
+            "required": [
+                "id",
+                "name"
+            ],
+            "description": "The venue every room belongs to. eventail holds no venue of its own, and the schema requires one that each room names."
+        },
+        "source": {
+            "description": "Identifies this publisher to whoever consumes the document.",
+            "default": {},
+            "type": "object",
+            "properties": {
+                "name": {
+                    "default": "eventail",
+                    "type": "string",
+                    "minLength": 1,
+                    "x-env": "SOURCE_NAME"
+                },
+                "vendorId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-env": "SOURCE_VENDOR_ID"
+                }
+            }
+        }
+    },
+    "required": [
+        "eventail",
+        "document",
+        "venue"
+    ]
+}
