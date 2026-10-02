@@ -19,8 +19,8 @@ it does changes anything in Eventail.
 - A client credentials client at your sign-in provider, set up as described in
   [Sign-in provider](/self-hosting/sign-in-provider#the-integration-s-client). The adapter signs
   in as itself, the same way any integration does.
-- The ID of the edition to publish. [Showing the schedule](/integration/schedule) shows how to
-  list editions to find it.
+- The ID of the edition to publish. Its settings page in the web app shows it, with a button
+  that copies it.
 
 ## Docker Compose
 

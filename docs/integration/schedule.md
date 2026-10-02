@@ -31,7 +31,8 @@ Accept: application/vnd.api+json
 
 Leaving `Accept` out also works, but a client that asks only for `application/json` gets `406`.
 
-To find the edition's ID, list the editions:
+An organizer finds the edition's ID on its settings page in the web app, where a button copies
+it. To find it from the API instead, list the editions:
 
 ```http
 GET /editions
