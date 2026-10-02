@@ -105,6 +105,22 @@ from your certificate with `kubectl create secret tls`, or have cert-manager iss
 an annotation under `ingress.annotations`, for example
 `cert-manager.io/cluster-issuer: letsencrypt`.
 
+A cluster that routes with Gateway API sets `httpRoute` instead, naming the Gateway to attach
+to:
+
+```yaml
+httpRoute:
+  enabled: true
+  parentRefs:
+    - name: public
+      namespace: gateways
+```
+
+The chart creates one HTTPRoute per hostname and nothing else. The Gateway holds the listeners
+and their certificates, so TLS is configured there rather than in these values, and the chart
+does not create the Gateway: it is usually shared and outlives any one release. Both routers
+may be enabled at once, which is how you move from one to the other without a gap.
+
 Both predicates are required. Leave `integrationPredicate` at `` `false` ``, which matches no
 token, until you build an integration. [Sign-in provider](/self-hosting/sign-in-provider)
 explains both.
@@ -157,10 +173,10 @@ Open `webUrl` and sign in with the account that `jwt.superAdminPredicate` matche
 you create the first team and the first edition. If signing in fails,
 [Sign-in provider](/self-hosting/sign-in-provider) lists what the API checks.
 
-## Without the chart's Ingress
+## Without the chart's routing
 
-Leave `ingress.enabled` at its default, `false`, and route each hostname to its Service on
-port 80. For a release named `eventail` those are `eventail-web` and `eventail-api`;
+Leave both `ingress.enabled` and `httpRoute.enabled` at their default, `false`, and route each
+hostname to its Service on port 80. For a release named `eventail` those are `eventail-web` and `eventail-api`;
 `kubectl get services` shows the names for any other release name. The chart still derives
 everything else from `webUrl` and `apiUrl`.
 

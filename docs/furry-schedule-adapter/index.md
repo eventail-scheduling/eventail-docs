@@ -79,8 +79,37 @@ venue:
   name: Example Convention Center
 ```
 
-No Ingress is created. Route to the Service yourself if the document should be reachable from
-outside the cluster.
+Nothing is exposed by default. To publish the document, set the hostnames and enable whichever
+router your cluster uses:
+
+```yaml
+hostnames:
+  - schedule.example.com
+
+ingress:
+  enabled: true
+  className: nginx
+  tls:
+    - secretName: schedule-tls
+      hosts:
+        - schedule.example.com
+```
+
+With Gateway API, name the Gateway to attach to instead:
+
+```yaml
+hostnames:
+  - schedule.example.com
+
+httpRoute:
+  enabled: true
+  parentRefs:
+    - name: public
+      namespace: gateways
+```
+
+The Gateway holds the listeners and their certificates, so TLS is configured there rather than
+in these values. Both routers may be enabled at once while you move between them.
 
 The access token is cached on a PersistentVolumeClaim so a restart does not mint another one.
 Providers meter these, and an `emptyDir` would lose the cache every time the pod restarts.
