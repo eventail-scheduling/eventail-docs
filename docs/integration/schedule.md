@@ -38,6 +38,41 @@ it. To find it from the API instead, list the editions:
 GET /editions
 ```
 
+## Check the contract version
+
+Every API response carries the version of the HTTP contract it was served under:
+
+```http
+Eventail-Contract-Version: 1
+```
+
+It rises by one whenever a change would break a client written against the previous number,
+and never for anything you can ignore, such as a new field or a new endpoint. It counts
+breakage anywhere in the API, so it can move for an endpoint you never call.
+
+Whether it is worth reading depends on what you build.
+
+A client that only reads, from one or two endpoints, and validates what it parses, is already
+covered by that validation: it fires exactly when something you use changed, and names the
+field. The contract version would fire earlier but less precisely, and there is nothing to do
+differently, so you can ignore it. Eventail's own
+[furry schedule adapter](/furry-schedule-adapter/) works this way. It parses optimistically and
+keeps serving its last good document when a poll will not parse.
+
+A client that writes, or that spans much of the API, gets more from it. A write refused by a
+contract you no longer match costs more than a stale read, and the more endpoints you touch the
+likelier a bump is yours. Read it on each response rather than once at startup, since a server
+can be upgraded while your client keeps polling, and stop on a number you do not know instead
+of writing against a contract you cannot see.
+
+Every documented endpoint sends it, including on a `401` before you have a token and on a `304`
+with no body. `/health` does not, so read it from an API endpoint.
+
+It is not the release version and not the `version` in the OpenAPI document, both of which move
+for changes that leave the contract alone, such as a renamed setting. Each published spec
+records the value it was generated from in `info.x-contract-version`. Nothing a client sends
+negotiates it: the server states what it serves, and a client decides what to do about it.
+
 ## Read the current schedule
 
 ```http
