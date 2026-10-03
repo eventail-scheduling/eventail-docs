@@ -21,7 +21,9 @@ const hrefFor = (version: string): string => {
     const target = apiVersions.find((entry) => entry.version === version);
 
     if (typeof operationId === "string" && target?.operationIds.includes(operationId)) {
-        return `/reference/api/${version}/${operationId}`;
+        return version === versions[0]
+            ? `/reference/api/${operationId}`
+            : `/reference/api/${version}/${operationId}`;
     }
 
     return version === versions[0] ? "/reference/api/" : `/reference/api/${version}/`;
