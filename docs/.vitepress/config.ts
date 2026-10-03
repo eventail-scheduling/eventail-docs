@@ -11,7 +11,8 @@ const apiSidebar = (version: string, spec: ApiSpec["spec"]): DefaultTheme.Sideba
     },
     ...useSidebar({
         spec,
-        linkPrefix: `/reference/api/${version}/`,
+        linkPrefix:
+            version === apiSpecs[0].version ? "/reference/api/" : `/reference/api/${version}/`,
         sidebarItemTemplate: ({ method, path, title }) =>
             `<span class="api-method api-method-${method}">${method.toUpperCase()}</span>${title ?? path}`,
     })
