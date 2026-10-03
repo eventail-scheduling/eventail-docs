@@ -9,15 +9,15 @@ published schedule from the API. Only confirmed sessions appear in it.
 ## Concepts
 
 - **Edition:** one run of a conference, with its dates and time zone. Sessions, hosts, tracks,
-  session types, locations, custom fields and schedules each belong to an edition.
+  session types, venues, locations, custom fields and schedules each belong to an edition.
 - **Session:** a talk, workshop or any other item that takes a slot. A session is in one of
   these states: submitted, accepted, confirmed, rejected, withdrawn or canceled.
 - **Host:** a person presenting a session. A session can have several. Hosts can invite more
   by email while the session is submitted or accepted; managers can invite at any time.
 - **Team:** a group of organizers who share one role (admin, manager or viewer) across every
   edition. A person on several teams gets the highest of their roles.
-- **Tracks, session types and locations:** tracks and session types group sessions, and
-  locations are where they happen.
+- **Tracks, session types, venues and locations:** tracks and session types group sessions,
+  locations are where they happen, and every location sits in a venue.
 - **Custom fields:** extra questions on the submission form or on a host's profile.
 - **Schedule:** the timetable. Organizers edit a draft and publish it as often as they like,
   each time as preliminary or final. After a final publication, later ones are final too. An

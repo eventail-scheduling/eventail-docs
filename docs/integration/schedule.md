@@ -43,7 +43,7 @@ GET /editions
 Every API response carries the version of the HTTP contract it was served under:
 
 ```http
-Eventail-Contract-Version: 1
+Eventail-Contract-Version: 2
 ```
 
 It rises by one whenever a change would break a client written against the previous number,
@@ -104,16 +104,22 @@ relates to its `session` and its `location`, and carries:
 | `startsAt`, `endsAt`        | When the session itself runs, as UTC instants.                                                            |
 | `setupTime`, `teardownTime` | How long the room is also taken before and after, as ISO 8601 durations such as `PT15M`.                  |
 
+Every location belongs to exactly one `venue`, which carries a `name`, an optional `address` and
+a `position` giving the order the organizers put the venues in. A convention running in two
+buildings has two venues; one running in a single building has one, and every location belongs
+to it.
+
 The document always includes the edition. It includes the slots too, unless you send an empty
 `include`. Ask for more with `include`:
 
 ```http
-GET /editions/{editionId}/schedules/current?include=slots.location,slots.session.hosts,slots.session.track,slots.session.sessionType
+GET /editions/{editionId}/schedules/current?include=slots.location.venue,slots.session.hosts,slots.session.track,slots.session.sessionType
 ```
 
 Available includes:
 
 - `slots.location`
+- `slots.location.venue`
 - `slots.session.track`
 - `slots.session.sessionType`
 - `slots.session.hosts.responses.customField`
@@ -127,7 +133,7 @@ Sparse fieldsets trim the document to what you show, for example
 
 ### Fields per resource
 
-[Show the current schedule](/reference/api/0.1/showCurrentSchedule) in the API reference lists
+[Show the current schedule](/reference/api/showCurrentSchedule) in the API reference lists
 every attribute and relationship of each resource. It also lists attributes only organizers
 receive, which an integration never gets:
 
@@ -176,10 +182,10 @@ track's color. It can also change when nothing in your document did, for example
 to a track you do not include. The tag does not depend on `include` or `fields`: if you change
 your query, drop the stored tag and fetch the full document once.
 
-Sessions, hosts, tracks, session types, locations and answers are read live, so their edits reach
-the document without a new publication. Slot times, and which location a slot is in, change only
-when the organizers publish again. A session that leaves the confirmed state, for example because
-it was canceled, drops out of the document at once, together with its slot.
+Sessions, hosts, tracks, session types, locations, venues and answers are read live, so their
+edits reach the document without a new publication. Slot times, and which location a slot is in,
+change only when the organizers publish again. A session that leaves the confirmed state, for
+example because it was canceled, drops out of the document at once, together with its slot.
 
 Poll every 60 seconds, and every 15 seconds while the event runs. An unchanged schedule costs a
 `304` and nothing else.
@@ -188,8 +194,8 @@ Poll every 60 seconds, and every 15 seconds while the event runs. An unchanged s
 
 Each publication is a new schedule with new slot IDs. To tell whether a slot moved or is new,
 match slots by `stableId`, which stays the same across publications. A slot the organizers
-delete and place again gets a new `stableId`. Sessions, hosts, tracks, session types and
-locations keep their IDs.
+delete and place again gets a new `stableId`. Sessions, hosts, tracks, session types,
+locations and venues keep their IDs.
 
 Replace your copy with each new document. A slot, session or host that is no longer in it has
 been removed or unpublished.
@@ -202,6 +208,7 @@ The same token can read the edition's configuration:
 - `GET /editions/{editionId}/tracks`
 - `GET /editions/{editionId}/session-types`
 - `GET /editions/{editionId}/locations`
+- `GET /editions/{editionId}/venues`
 - `GET /editions/{editionId}/custom-fields`
 
 Each list endpoint also has a by-ID form, such as `GET /editions/{editionId}/tracks/{trackId}`.

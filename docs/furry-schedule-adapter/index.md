@@ -15,7 +15,8 @@ it does changes anything in Eventail.
 
 ## Before you start
 
-- A running Eventail the adapter can reach. It is usually on the same network and not exposed.
+- A running Eventail 0.2.0 or newer the adapter can reach. It is usually on the same network
+  and not exposed.
 - A client credentials client at your sign-in provider, set up as described in
   [Sign-in provider](/self-hosting/sign-in-provider#the-integration-s-client). The adapter signs
   in as itself, the same way any integration does.
@@ -33,7 +34,7 @@ curl -fsSLO "$base/furry-schedule-adapter.env.example"
 cp furry-schedule-adapter.env.example furry-schedule-adapter.env
 ```
 
-Fill in the edition, the client and the venue, then start it alongside the rest:
+Fill in the edition and the client, then start it alongside the rest:
 
 ```sh
 docker compose --profile furry-schedule-adapter up -d
@@ -73,10 +74,6 @@ eventail:
 
 document:
   language: en
-
-venue:
-  id: main
-  name: Example Convention Center
 ```
 
 Nothing is exposed by default. To publish the document, set the hostnames and enable whichever
@@ -127,6 +124,17 @@ Until the first poll succeeds, `/schedule.json` answers `503` rather than an emp
 it does so again if the schedule goes too stale to serve. Both responses say why. `/health`
 answers `200` whenever the process is running, stale or not, so an upstream outage does not
 restart the container.
+
+Rooms carry the venue they sit in, taken from the edition, so a convention running in two
+buildings comes out as two venues. An Eventail older than 0.2.0 does not offer the venue
+include at all, so it refuses every request the adapter makes and `/schedule.json` keeps
+answering `503`.
+
+Membership levels are off until you name the question that holds them. Ask sessions a choice
+question whose options are the levels you offer, then set
+`document.membershipCustomFieldKey` to its external key. The options become the document's
+membership levels as soon as a session has answered, and each session's answer says which ones
+its event is open to. A session that answers nothing is open to everyone.
 
 ## Configuration
 
